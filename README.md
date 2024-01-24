@@ -14,4 +14,4 @@ R codes for data preparation and analysis for TXSELECT web-tool development
    - Analysis codes for TX-SELECT paper
 
 7. plots.R
-   - Codes for reproducible plots in TZ-SELECT paper
+   - Codes for reproducible plots in TX-SELECT paper
