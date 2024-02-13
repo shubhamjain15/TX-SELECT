@@ -8,6 +8,8 @@ gis_CCN_UA       <- read_sf(paste0(loc_gis_data,"CCN_UA_Combined.shp"))
 gis_ecoregion    <- read_sf(paste0(loc_gis_data,"ecoregions.shp"))
 gis_911          <- read_sf(paste0(loc_gis_data,"addresses_NAD.shp"))
 gis_coastal_ossf <-  read_sf(paste0(loc_gis_data,"coastal_OSSFs.shp"))
+gis_ATTAINS_lines <- read_sf(paste0(loc_gis_data,"ATTAINS_LINES_HUC12_JOIN.shp"))
+gis_ATTAINS_poly <- read_sf(paste0(loc_gis_data,"ATTAINS_POLY_HUC12_JOIN.shp"))
 
 #Rasters
 gis_ssurgo       <- terra::rast(paste0(loc_gis_data,"SSURGO_septic_class.tif"))    #30m septic tank absorption field- dominant conditions raster
