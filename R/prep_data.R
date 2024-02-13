@@ -1,11 +1,8 @@
-source("load_libraries.R")
-load(file = "env_data.RData")
-source("load_data.R")
-
 #1.1. Prepare HUC12 to/from##################################################### 
 ################################################################################
-tbl_subbasins <- st_drop_geometry(gis_subbasins%>%select("HUC12","NAME"))       #Make sure HUC12 is character and has length 12
-tbl_counties <- st_drop_geometry(gis_counties%>%select("GEOID", "NAME"))
+tbl_subbasins <- st_drop_geometry(gis_subbasins%>%select("HUC12"))       #Make sure HUC12 is character and has length 12
+tbl_counties <- st_drop_geometry(gis_counties)
+gis_subbasins_counties <- st_intersection(gis_subbasins,gis_counties)%>%select(c("HUC12","GEOID"))
 
 #1.2. Land cover################################################################
 #Get land cover area for each subbasin##########################################
@@ -14,15 +11,45 @@ results <- list()
 for(i in 1:nrow(gis_subbasins)){
   poly <- gis_subbasins[i,]
   df <- data.frame(table(terra::extract(gis_nlcd,poly))*res(gis_nlcd)[1] * res(gis_nlcd)[2])
-  df$nlcd_2019 <- paste0("VALUE_",df$nlcd_2019)                                 #change lc class values to columns names 
   df <- df%>%
-          select(c("nlcd_2019", "Freq"))%>%
-          pivot_wider(names_from = nlcd_2019, values_from = Freq)
+          select(c("NLCD_Land", "Freq"))%>%
+          pivot_wider(names_from = NLCD_Land, values_from = Freq)
   results[[i]] <- data.frame(HUC12 = gis_subbasins$HUC12[i],df)
 }
-
 tbl_lc_subbasins <- do.call(bind_rows, results)                                 #Area in square meters
 tbl_lc_subbasins[is.na(tbl_lc_subbasins)] <- 0
+
+rm(results,poly,i,df)
+
+#Get land cover area for each county############################################
+res(gis_nlcd)                                                                   #30m x 30 m raster
+results <- list()
+for(i in 1:nrow(gis_counties)){
+  poly <- gis_counties[i,]
+  df <- data.frame(table(terra::extract(gis_nlcd,poly))*res(gis_nlcd)[1] * res(gis_nlcd)[2])
+  df <- df%>%
+    select(c("NLCD_Land", "Freq"))%>%
+    pivot_wider(names_from = NLCD_Land, values_from = Freq)
+  results[[i]] <- data.frame(GEOID = gis_counties$GEOID[i],df)
+}
+tbl_lc_counties <- do.call(bind_rows, results)                                 #Area in square meters
+tbl_lc_counties[is.na(tbl_lc_counties)] <- 0
+
+rm(results,poly,i,df)
+
+#Get land cover area for each subbasin and county intersection##################
+res(gis_nlcd)                                                                   #30m x 30 m raster
+results <- list()
+for(i in 1:nrow(gis_subbasins_counties)){
+  poly <- gis_subbasins_counties[i,]
+  df <- data.frame(table(terra::extract(gis_nlcd,poly))*res(gis_nlcd)[1] * res(gis_nlcd)[2])
+  df <- df%>%
+    select(c("NLCD_Land", "Freq"))%>%
+    pivot_wider(names_from = NLCD_Land, values_from = Freq)
+  results[[i]] <- data.frame(HUC12 = gis_subbasins_counties$HUC12[i],GEOID = gis_subbasins_counties$GEOID[i],df)
+}
+tbl_lc_subbasins_counties <- do.call(bind_rows, results)                        #Area in square meters
+tbl_lc_subbasins_counties[is.na(tbl_lc_subbasins_counties)] <- 0
 
 rm(results,poly,i,df)
 
@@ -40,7 +67,7 @@ hu20 <- round(exact_extract(gis_hu20,
                              force_df = TRUE,
                              progress = TRUE) *10^-4)                           #HU per km2 (10^-6) and cell size is 10*10 m2. 
 
-tbl_census20 <- data.frame(HUC12 = tbl_subbasins$HUC12, Pop = as.numeric(pop20), HU = as.numeric(hu20))
+tbl_census20 <- data.frame(HUC12 = tbl_subbasins$HUC12, Pop = as.numeric(pop20$sum), HU = as.numeric(hu20$sum))
 rm(pop20,hu20)
 
 #1.4. Dominant eco-region & Deer density #######################################
@@ -56,6 +83,13 @@ tbl_ecoregion <- st_drop_geometry(tbl_ecoregion)
 tbl_ecoregion <- tbl_ecoregion%>%                                               #Join deer density table by ecoregion
                         left_join(tbl_deer_dens, by = "NA_L3CODE")
 
+#Missing subbasin
+tbl_ecoregion <- tbl_subbasins%>%
+                      left_join(tbl_ecoregion, by = "HUC12")
+
+#assign it previous HUC value
+tbl_ecoregion[which(is.na(tbl_ecoregion$NA_L3CODE)),2:ncol(tbl_ecoregion)] <- tbl_ecoregion[which(is.na(tbl_ecoregion$NA_L3CODE))-1,2:ncol(tbl_ecoregion)]
+
 #1.5. PRISM#####################################################################
 ################################################################################
 precip <- exact_extract(gis_prism,
@@ -68,14 +102,82 @@ rm(precip)
 
 #1.6. Soil classes##############################################################
 ################################################################################
+res(gis_ssurgo)                                                                 #30m x 30 m raster
+results <- list()
+for(i in 1:nrow(gis_subbasins)){
+  poly <- gis_subbasins[i,]
+  df <- data.frame(table(terra::extract(gis_ssurgo,poly)))
+  results[[i]] <- data.frame(HUC12 = gis_subbasins$HUC12[i],Septic_class = df$engstafdcd[which.max(df$Freq)])
+}
 
+tbl_ssurgo <- do.call(bind_rows, results)                                 
 
+rm(results,poly,i,df)      
 
 #1.7. 911 Addresses#############################################################
 ################################################################################
+intersects <- st_intersects(gis_911, gis_CCN_UA,sparse = FALSE)
+gis_ossfs <- gis_911[intersects == FALSE, ]
+
+intersects <- st_join(gis_ossfs, gis_subbasins)
+
+points_summarized <- intersects %>%
+                        group_by(HUC12) %>%
+                        summarize(Ossf911 = n())
+
+points_summarized <- st_drop_geometry(points_summarized)
+
+tbl_ossfs_911 <- left_join(tbl_subbasins, points_summarized, by = "HUC12")
+tbl_ossfs_911$Ossf911[is.na(tbl_ossfs_911$Ossf911)] <- 0
+rm(intersects,points_summarized)
+
+#1.9. Coastal OSSF##############################################################
+################################################################################
+intersects <- st_join(gis_coastal_ossf, gis_subbasins)
+
+points_summarized <- intersects %>%
+                        group_by(HUC12) %>%
+                        summarize(OssfCoastal = n())
+
+points_summarized <- st_drop_geometry(points_summarized)
+
+tbl_ossfs_coastal <- left_join(tbl_subbasins, points_summarized, by = "HUC12")
+tbl_ossfs_coastal$OssfCoastal[is.na(tbl_ossfs_coastal$OssfCoastal)] <- 0
+rm(intersects,points_summarized)
+
+#1.10. OSSF 2020 HU#############################################################
+################################################################################
+# Crop and mask the raster based on the shapefile
+cropped_raster <- crop(gis_hu20, gis_CCN_UA)
+clipped_raster <- mask(cropped_raster, gis_CCN_UA)
+clipped_raster <- clipped_raster * 0
+clipped_raster <- extend(clipped_raster,gis_hu20)
+clipped_raster <- ifel(is.na(clipped_raster), 1, clipped_raster)
+
+# Multiply the rasters
+gis_hu20_ossf <- gis_hu20*clipped_raster
+hu20_ossf <- round(exact_extract(gis_hu20_ossf,
+                            st_as_sf(gis_subbasins),
+                            fun = "sum",
+                            force_df = TRUE,
+                            progress = TRUE) *10^-4)                           #HU per km2 (10^-6) and cell size is 10*10 m2. 
+
+tbl_hu20_ossf <- data.frame(HUC12 = tbl_subbasins$HUC12, OssfHousingUnits = as.numeric(hu20_ossf$sum))
+rm(cropped_raster,clipped_raster,hu20_ossf,gis_hu20_ossf)
+
+#1.11. OSSF 1990 Census#########################################################
+################################################################################
+ossf_1990 <- round(exact_extract(gis_ossf_1990,
+                            st_as_sf(gis_subbasins),
+                            fun = "sum",
+                            force_df = TRUE,
+                            progress = TRUE) *10^-4)                           #HU per km2 (10^-6) and cell size is 10*10 m2. 
+
+tbl_ossfs_1990 <- data.frame(HUC12 = tbl_subbasins$HUC12, Ossf1990 = as.numeric(ossf_1990$sum))
+rm(ossf_1990)
 
 
-#1.8. NASS data#################################################################
+#1.12. NASS data#################################################################
 ################################################################################
 nassqs_auth(key = "0E40870B-06A8-3D4C-83E3-112EAFC3CC02")
 params <- list(source_desc = "CENSUS",                                          #Check for spaces and spelling errors
@@ -97,13 +199,67 @@ tbl_nass <- tbl_nass%>%
                 select("state_alpha","commodity_desc","GEOID","county_name","Value")%>%
                 pivot_wider(names_from = "commodity_desc", values_from = "Value")%>%
                 mutate_all(~replace_na(., 0))
+
+tbl_nass <- tbl_nass%>%
+              filter(GEOID %in% tbl_counties$GEOID)
+  
+
 rm(params)
 
-#1.9. CAFO data#################################################################
+#1.13. Livestock sub basins counts data#########################################
 ################################################################################
+tbl_livestock_SR <- tbl_lc_counties%>%
+                          rowwise() %>%
+                          mutate(suitable_livestock = (Shrub.Scrub+Herbaceous+Hay.Pasture)/4046.86)%>%    #per acre
+                          select(c("GEOID","suitable_livestock"))%>%
+                          left_join(tbl_nass, join_by("GEOID" == "GEOID"))%>%
+                          mutate(CATTLE_SR = CATTLE/suitable_livestock,
+                                 GOATS_SR = GOATS/suitable_livestock,
+                                 SHEEP_SR = SHEEP/suitable_livestock,
+                                 EQUINE_SR = EQUINE/suitable_livestock)
+
+tbl_livestock_counts <- tbl_lc_subbasins_counties%>%
+                              rowwise()%>%
+                              mutate(suitable_livestock_sub = (Shrub.Scrub+Herbaceous+Hay.Pasture)/4046.86)%>%    #per acre
+                              select(c("HUC12","GEOID","suitable_livestock_sub"))%>%
+                              left_join(tbl_livestock_SR, by = "GEOID")%>%
+                              mutate(Cattle_sub = CATTLE_SR*suitable_livestock_sub)%>%
+                              mutate(Equine_sub = EQUINE_SR*suitable_livestock_sub)%>%
+                              mutate(Goats_sub = GOATS_SR*suitable_livestock_sub)%>%
+                              mutate(Sheep_sub = SHEEP_SR*suitable_livestock_sub)%>%
+                              group_by(HUC12)%>%
+                              summarise(Cattle = round(sum(Cattle_sub),0),
+                                        Equine = round(sum(Equine_sub),0),
+                                        Goats = round(sum(Goats_sub),0),
+                                        Sheep = round(sum(Sheep_sub),0))
 
 
-#1.10. WWTF#####################################################################
+#1.14. CAFO data#################################################################
+################################################################################
+tbl_cafos <- tbl_cafo_data%>%
+  select("GeoId","Animal","Count")%>%
+  group_by(GeoId,Animal)%>%
+  summarise(Count = sum(Count))%>%
+  ungroup()%>%
+  pivot_wider(names_from = "Animal",values_from = "Count")%>%
+  mutate(GEOID = as.character(GeoId))%>%                          #here all geoids are 5 characters, if not then put a check
+  select(c("GEOID","CATTLE","HORSES","SHEEP OR LAMBS"))%>%
+  rename(CAFO_CATTLE = "CATTLE", CAFO_EQUINE = "HORSES", CAFO_SHEEP = "SHEEP OR LAMBS")%>%
+  left_join(tbl_nass,join_by("GEOID" == "GEOID"))%>%
+  mutate(CATTLE_perc = CAFO_CATTLE*100/CATTLE)%>%
+  mutate(EQUINE_perc = CAFO_EQUINE*100/EQUINE)%>%
+  mutate(SHEEP_perc = CAFO_SHEEP*100/SHEEP)
+
+write_csv(tbl_cafos,"Output/cafo_summary.csv")
+
+tbl_check_livestock_sr <- tbl_nass%>%
+                              left_join(tbl_livestock_SR%>%select("GEOID","suitable_livestock"))%>%
+                              mutate(suitable_livestock = suitable_livestock * 2.47105)%>%    #acres
+                              mutate(CATTLE_SR = suitable_livestock/CATTLE)%>%
+                              mutate(EQUINE_SR = suitable_livestock/EQUINE)%>%
+                              mutate(GOATS_SR = suitable_livestock/GOATS)%>%
+                              mutate(SHEEP_SR = suitable_livestock/SHEEP)
+#1.15. WWTF#####################################################################
 ################################################################################
 df <- echoWaterGetMeta()
 tbl_facs_all <- echoWaterGetFacilityInfo(output = "df", 
@@ -111,7 +267,7 @@ tbl_facs_all <- echoWaterGetFacilityInfo(output = "df",
                                           "1201","1202","1203","1204","1205","1206",
                                           "1207","1208","1209","1210","1211",
                                           "1304","1307","1308","1309","1305","1306"),
-                                qcolumns = '1,14,23,24,25,26,197,204,290,308',
+                                qcolumns = '1,3,4,5,14,23,24,25,26,197,204,290,308',
                                 p_pstat = "EFF")
 
 #Remove all facilities that are listed as follows in permit components (NA values will be filtered by other criteria)
@@ -210,7 +366,7 @@ tbl_WWTF_facs <- tbl_WWTF_facs%>%
 tbl_WWTF_facs <- tbl_WWTF_facs%>%
                   filter(FacDerivedWBD %in% tbl_subbasins$HUC12)
 
-rm(df,pollutants)
-#1.11 Write all RDATA###########################################################
+rm(i,df,pollutants)
+#1.16 Write all RDATA###########################################################
 ################################################################################
 save.image(file = "env_data.RData")
