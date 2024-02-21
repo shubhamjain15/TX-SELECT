@@ -1,13 +1,25 @@
-TX-SELECT analysis codes
+TX-SELECT:A Web-Based Decision Support System for Regional Assessment of
+Potential E. coli Loads Using a Spatially Explicit Modeling Approach
 ================
 Shubham Jain
-February 21, 2024
 
-# TX-SELECT Project Summary
+    ## [1] "Time of last build: 2024-02-21 13:57:46.278369"
 
-This project contains the R scripts for the TX-SELECT paper. It includes
-scripts for loading required libraries, preparing data, conducting
-analysis, and generating reproducible plots.
+This project contains the R code for: Jain, S.,Srinivasan R., Helton
+T.J., and Karthikeyan R. (2024), TX-SELECT:A Web-Based Decision Support
+System for Regional Assessment of Potential E. coli Loads Using a
+Spatially Explicit Modeling Approach
+
+## Summary
+
+We developed a web-based Decision Support System (DSS), TXSELECT, which
+provides a user-friendly interface to run the SELECT model on Texas
+watersheds. The DSS includes pre-determined watershed specific inputs
+that can be readily adjusted within the interface based on user
+preference and/or stakeholder recommendations, obviating the necessity
+for expensive GIS tools and data extraction.
+
+\##Download data Download data required to reproduce the results from:
 
 ## File Descriptions
 
