@@ -3,7 +3,7 @@ of Potential E. coli Loads Using a Spatially Explicit Modeling Approach
 ================
 Shubham Jain
 
-    ## [1] "Time of last build: 2024-02-21 15:10:39.341675"
+    ## [1] "Time of last build: 2024-02-21 15:11:52.884667"
 
 This project contains the R code for: Jain, S.,Srinivasan R., Helton
 T.J., and Karthikeyan R. (2024), TX-SELECT: A Web-Based Decision Support
@@ -12,7 +12,7 @@ Spatially Explicit Modeling Approach
 
 ## Summary
 
-TXSELECT (<https://select.tamu.edu>), is a web-based Decision Support
+TXSELECT (<https://tx.select.tamu.edu>), is a web-based Decision Support
 System (DSS), which provides a user-friendly interface to run the SELECT
 model on Texas watersheds. The DSS includes pre-determined watershed
 specific inputs that can be readily adjusted within the interface based
