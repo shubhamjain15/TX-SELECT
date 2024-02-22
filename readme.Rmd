@@ -1,22 +1,33 @@
 ---
-title: "TX-SELECT analysis codes"
+title: "TX-SELECT: A Web-Based Decision Support System for Regional Assessment of Potential E. coli Loads Using a Spatially Explicit Modeling Approach"
 author: "Shubham Jain"
-date: "`r format(Sys.Date(), '%B %d, %Y')`"
+#date: "`r format(Sys.Date(), '%B %d, %Y')`"
 output: github_document
 ---
 
-# TX-SELECT Project Summary
+```{r builddate, echo=FALSE}
+paste0("Time of last build: ", Sys.time())
+```
 
-This project contains the R scripts for the TX-SELECT paper. It includes scripts for loading required libraries, preparing data, conducting analysis, and generating reproducible plots.
+**This project contains the R code for:** Jain, S.,Srinivasan R., Helton T.J., and Karthikeyan R. (2024), TX-SELECT: A Web-Based Decision Support System for Regional Assessment of Potential E. coli Loads Using a Spatially Explicit Modeling Approach. ***Under Review***.
+
+## Summary
+TXSELECT (https://tx.select.tamu.edu), is a web-based Decision Support System (DSS), which provides a user-friendly interface to run the SELECT model on Texas watersheds. The DSS includes pre-determined watershed specific inputs that can be readily adjusted within the interface based on user preference and/or stakeholder recommendations, obviating the necessity for expensive GIS tools and data extraction.
+
+## Required data
+Data required to reproduce the results is available at:  
 
 ## File Descriptions
 
 - `load_libraries.R`: Script to load all required packages to run other scripts.
+- `load_data.R`: Script to load all GIS and tabular data required for analysis.
 - `prep_data.R`: Script to prepare input data using GIS and other datasets.
-- `SELECT_counts.R`: Script to prepare input tables for SELECT web tools containing default numbers.
+- `create_TXSELECT_tables.R`: Script to prepare input tables for SELECT web tools containing default numbers.
+- `estimate_loads.R`: scripts to estimate potential loads from all sources.
 - `analysis.R`: Analysis codes for the TX-SELECT paper.
-- `plots.R`: Codes for reproducible plots in the TX-SELECT paper.
-
+- `utils.R`: Required functions for plots.
+- `plots_tables.R`: Codes for reproducible plots and tables in the TX-SELECT paper.
+- `supplementary`: Codes for reproducible plots in the TX-SELECT supplementary materials.
 ## Instructions
 
 To run the code, follow these steps:
@@ -25,3 +36,8 @@ To run the code, follow these steps:
 
    ```bash
    git clone https://github.com/shubhamjain15/TX-SELECT.git
+   ```
+
+2. **Download data**: Download required data from: and save it within the current working directory.   
+   
+3. **Run R code**: Run R scripts in the order as listed in file descriptions.

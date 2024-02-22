@@ -3,9 +3,9 @@ of Potential E. coli Loads Using a Spatially Explicit Modeling Approach
 ================
 Shubham Jain
 
-    ## [1] "Time of last build: 2024-02-21 15:14:24.34464"
+    ## [1] "Time of last build: 2024-02-22 16:51:04.148095"
 
-This project contains the R code for: Jain, S.,Srinivasan R., Helton
+**This project contains the R code for:** Jain, S.,Srinivasan R., Helton
 T.J., and Karthikeyan R. (2024), TX-SELECT: A Web-Based Decision Support
 System for Regional Assessment of Potential E. coli Loads Using a
 Spatially Explicit Modeling Approach. ***Under Review***.
@@ -27,14 +27,20 @@ Data required to reproduce the results is available at:
 
 - `load_libraries.R`: Script to load all required packages to run other
   scripts.
+- `load_data.R`: Script to load all GIS and tabular data required for
+  analysis.
 - `prep_data.R`: Script to prepare input data using GIS and other
   datasets.
-- `SELECT_counts.R`: Script to prepare input tables for SELECT web tools
-  containing default numbers.
+- `create_TXSELECT_tables.R`: Script to prepare input tables for SELECT
+  web tools containing default numbers.
+- `estimate_loads.R`: scripts to estimate potential loads from all
+  sources.
 - `analysis.R`: Analysis codes for the TX-SELECT paper.
-- `plots.R`: Codes for reproducible plots in the TX-SELECT paper.
-
-## Instructions
+- `utils.R`: Required functions for plots.
+- `plots_tables.R`: Codes for reproducible plots and tables in the
+  TX-SELECT paper.
+- `supplementary`: Codes for reproducible plots in the TX-SELECT
+  supplementary materials. \## Instructions
 
 To run the code, follow these steps:
 
