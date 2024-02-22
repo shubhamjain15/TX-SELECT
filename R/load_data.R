@@ -12,6 +12,7 @@ gis_ATTAINS_lines    <- read_sf(paste0(loc_gis_data,"ATTAINS_LINES_HUC12_JOIN.sh
 gis_ATTAINS_poly     <- read_sf(paste0(loc_gis_data,"ATTAINS_POLY_HUC12_JOIN.shp"))  #ATTAINS Data spatial joined with HUC12 boundaries in ArcPro 
 gis_HUC12_simplified <- read_sf(paste0(loc_gis_data,"HUC12_simplified_100m.shp"))
 gis_texas_boundary   <- read_sf(paste0(loc_gis_data, "texas_boundary.shp"))
+gis_counties_with911 <- read_sf(paste0(loc_gis_data, "counties_with_911_addresses.shp"))
 
 #Rasters
 gis_ssurgo           <- terra::rast(paste0(loc_gis_data,"SSURGO_septic_class.tif"))    #30m septic tank absorption field- dominant conditions raster

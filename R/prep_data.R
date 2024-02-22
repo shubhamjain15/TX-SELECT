@@ -245,20 +245,8 @@ tbl_cafos <- tbl_cafo_data%>%
   mutate(GEOID = as.character(GeoId))%>%                          #here all geoids are 5 characters, if not then put a check
   select(c("GEOID","CATTLE","HORSES","SHEEP OR LAMBS"))%>%
   rename(CAFO_CATTLE = "CATTLE", CAFO_EQUINE = "HORSES", CAFO_SHEEP = "SHEEP OR LAMBS")%>%
-  left_join(tbl_nass,join_by("GEOID" == "GEOID"))%>%
-  mutate(CATTLE_perc = CAFO_CATTLE*100/CATTLE)%>%
-  mutate(EQUINE_perc = CAFO_EQUINE*100/EQUINE)%>%
-  mutate(SHEEP_perc = CAFO_SHEEP*100/SHEEP)
+  left_join(tbl_nass,join_by("GEOID" == "GEOID"))
 
-write_csv(tbl_cafos,"Output/cafo_summary.csv")
-
-tbl_check_livestock_sr <- tbl_nass%>%
-                              left_join(tbl_livestock_SR%>%select("GEOID","suitable_livestock"))%>%
-                              mutate(suitable_livestock = suitable_livestock * 2.47105)%>%    #acres
-                              mutate(CATTLE_SR = suitable_livestock/CATTLE)%>%
-                              mutate(EQUINE_SR = suitable_livestock/EQUINE)%>%
-                              mutate(GOATS_SR = suitable_livestock/GOATS)%>%
-                              mutate(SHEEP_SR = suitable_livestock/SHEEP)
 #1.15. WWTF#####################################################################
 ################################################################################
 df <- echoWaterGetMeta()
