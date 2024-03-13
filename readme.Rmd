@@ -15,7 +15,7 @@ paste0("Time of last build: ", Sys.time())
 TXSELECT (https://tx.select.tamu.edu), is a web-based Decision Support System (DSS), which provides a user-friendly interface to run the SELECT model on Texas watersheds. The DSS includes pre-determined watershed specific inputs that can be readily adjusted within the interface based on user preference and/or stakeholder recommendations, obviating the necessity for expensive GIS tools and data extraction.
 
 ## Required data
-Data required to reproduce the results is available at:  
+Data required to reproduce the results is available at: https://doi.org/10.18738/T8/FWJVKW  
 
 ## File Descriptions
 
