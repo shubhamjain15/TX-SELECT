@@ -1,4 +1,3 @@
-#check if factor is changing the order of values
 #1. Table - Summary of potential loads##########################################
 #Animal counts
 total_counts <- final_counts%>%
