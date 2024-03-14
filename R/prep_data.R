@@ -190,7 +190,7 @@ params <- list(source_desc = "CENSUS",                                          
                               "EQUINE, HORSES & PONIES - INVENTORY",
                               "GOATS - INVENTORY",
                               "SHEEP, INCL LAMBS - INVENTORY"),
-               year = 2017,
+               year = 2022,
                agg_level_desc = "COUNTY",
                state_alpha = c("OK","TX","NM","KS","CO","LA","AR"))
 tbl_nass <- nassqs(params)
@@ -236,6 +236,22 @@ tbl_livestock_counts <- tbl_lc_subbasins_counties%>%
 
 #1.14. CAFO data#################################################################
 ################################################################################
+tbl_facs_all <- echoWaterGetFacilityInfo(output = "df", 
+                                         p_huc = c("1108","1109","1110","1112","1113","1114",
+                                                   "1201","1202","1203","1204","1205","1206",
+                                                   "1207","1208","1209","1210","1211",
+                                                   "1304","1307","1308","1309","1305","1306"),
+                                         qcolumns = '1,3,4,5,12,13,14,15,23,24,25,26,197,204,276,290,308',
+                                         p_pstat = "EFF")
+
+tbl_facs_cafos <- tbl_facs_all%>%
+                     filter(PermitComponents == "CAFO")
+
+tbl_facs_cafos <- tbl_facs_cafos%>%
+                      group_by(FacFIPSCode)%>%
+                      summarise(n = n())%>%
+                      left_join(tbl_cafos_cattle, join_by("FacFIPSCode" == "GEOID"))
+
 tbl_cafos <- tbl_cafo_data%>%
   select("GeoId","Animal","Count")%>%
   group_by(GeoId,Animal)%>%
@@ -247,6 +263,19 @@ tbl_cafos <- tbl_cafo_data%>%
   rename(CAFO_CATTLE = "CATTLE", CAFO_EQUINE = "HORSES", CAFO_SHEEP = "SHEEP OR LAMBS")%>%
   left_join(tbl_nass,join_by("GEOID" == "GEOID"))
 
+#cattle
+tbl_cafos_cattle <- tbl_cafos%>%filter(!is.na(CAFO_CATTLE))
+tbl_cafos_cattle$perc <- tbl_cafos_cattle$CAFO_CATTLE*100/tbl_cafos_cattle$CATTLE
+tbl_cafos_cattle <- tbl_cafos_cattle%>%left_join(tbl_livestock_SR[,1:2])
+tbl_cafos_cattle$cattle_sr <- tbl_cafos_cattle$suitable_livestock/tbl_cafos_cattle$CATTLE
+write.csv(tbl_cafos_cattle,"tbl_cafos_cattle.csv")
+
+#Counties with NPDES CAFOs >= 5 and contains significant max cattle populations and <6 acres per AU cattle
+cafo_counties_fips <- c("40139","48017","48069","48093","48111","48117","48143","48189","48195",
+                        "48205","48279","48341","48357","48369","48381","48421","48437")
+
+cafo_counties <- tbl_livestock_SR%>%filter(GEOID %in% cafo_counties_fips)
+
 #1.15. WWTF#####################################################################
 ################################################################################
 df <- echoWaterGetMeta()
@@ -255,7 +284,7 @@ tbl_facs_all <- echoWaterGetFacilityInfo(output = "df",
                                           "1201","1202","1203","1204","1205","1206",
                                           "1207","1208","1209","1210","1211",
                                           "1304","1307","1308","1309","1305","1306"),
-                                qcolumns = '1,3,4,5,14,23,24,25,26,197,204,290,308',
+                                qcolumns = '1,3,4,5,14,23,24,25,26,197,204,276,290,308',
                                 p_pstat = "EFF")
 
 #Remove all facilities that are listed as follows in permit components (NA values will be filtered by other criteria)

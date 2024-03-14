@@ -4,7 +4,7 @@ custom_labeller <- function(variable, value) {
     # Define the new names for each source
     source_names <- c("Cattle" = "Cattle",     #Make sure this order is same as factor order otherwise plot names will be wrong
                       "Goats_Sheep" = "Goats & Sheep",
-                      "Equine" = "Equine",
+                      "Equine" = "Horses",
                       "Deer" = "Deer",
                       "Hogs" = "Feral Hogs",
                       "FailingOSSFs" = "Failing OSSFs",

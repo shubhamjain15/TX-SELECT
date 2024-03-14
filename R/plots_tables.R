@@ -13,10 +13,10 @@ df <- final_load_hectares%>%
           pivot_longer(cols = -c("Subbasin","HUC02"), names_to = "Source", values_to = "Load")%>%
           mutate(Load = round(Load*10^-6,2))%>%
           group_by(HUC02,Source)%>%
-          summarise(Maximum = max(Load),
-                    Median = median(Load))%>%
-          pivot_wider(names_from = HUC02, values_from = c("Maximum","Median"))%>%
-          select(c("Source","Maximum_11","Median_11","Maximum_12","Median_12","Maximum_13","Median_13"))
+          summarise(Maximum = round(max(Load),2),
+                    Mean = round(mean(Load),2))%>%
+          pivot_wider(names_from = HUC02, values_from = c("Maximum","Mean"))%>%
+          select(c("Source","Maximum_11","Mean_11","Maximum_12","Mean_12","Maximum_13","Mean_13"))
 
 #reorder rows
 df$Source <- factor(df$Source, levels = c("Cattle","Goats_Sheep","Equine","Deer","Hogs","FailingOSSFs","Pets","WWTF","Total"))
@@ -36,7 +36,7 @@ df <- final_load_hectares%>%
         pivot_longer(cols = -c("type","Status"), names_to = "Source", values_to = "Load")%>%
         mutate(Load = round(Load*10^-6,2))%>%
         group_by(type,Status,Source)%>%
-        summarise(Median = median(Load))%>%
+        summarise(Median = round(median(Load),2))%>%
         pivot_wider(names_from = c("type","Status"), values_from = Median)%>%
         select(c("Source","Rural_Not Supporting","Rural_Fully Supporting","Rural_Not Assessed",
                  "Urban_Not Supporting","Urban_Fully Supporting","Urban_Not Assessed"))
@@ -67,7 +67,7 @@ gis_subbasin_loads <- gis_HUC12_simplified%>%
                           pivot_longer(cols = -geometry,names_to = "Source", values_to = "Load")%>%
                           group_by(Source)%>%                        
                           mutate(Load = cut(Load, 
-                                            breaks = c(-1, classIntervals(Load, n = 4, style = "fisher")$brks), 
+                                            breaks = c(-1,classIntervals(Load, n = 99, style = "kmeans")$brks), 
                                             labels = FALSE))
 
 gis_subbasin_loads$Source <- factor(gis_subbasin_loads$Source,levels = c("Cattle","Goats_Sheep","Equine","Deer","Hogs","FailingOSSFs","Pets","WWTF","Total") )
@@ -80,7 +80,7 @@ ggplot()+
   geom_sf(data = gis_subbasin_loads,aes(fill = Load), color = NA)+
   geom_sf(data = gis_texas_boundary, fill = "transparent", color = "black")+
   scale_fill_viridis_c(option = "H", direction = 1, begin = 0.2, end = 0.9, 
-                       breaks = 1:5,
+                       breaks = c(1,25,50,75,90),
                        labels = c("Negligible", "Low", "Moderate", "High", "Very High"))+
   facet_wrap(~ Source, ncol = 3,labeller = custom_labeller)+
   theme_bw()+
@@ -98,12 +98,12 @@ ggplot()+
         legend.title = element_text(face = "bold", size = 12),
         plot.margin = unit(c(0, 0, 0, 0), "cm"),
         text = element_text(family = "serif"))+
-  labs(fill = expression(italic("E. coli")~"load"))+
+  labs(fill = expression("Potential"~italic("E. coli")~"load"))+
   guides(fill = guide_colourbar(title.position = "top"))
 dev.off()
 
 
-#4. Plot Distribution of Total loads############################################
+#4. Plot - Distribution of Total loads##########################################
 df <- final_load_hectares%>%
           select(c("Total","type","Status"))%>%
           pivot_longer(cols = -c(type, Status), names_to = "Source",values_to = "Load")%>%
@@ -136,7 +136,7 @@ plot_top <- plot_grid(plot_dist,
                       nrow = 1, rel_widths = c(.65,.35))
 plot_top
 
-#5. Plot Distribution of Dominant loads#########################################
+#5. Plot - Distribution of Dominant loads#######################################
 df <- final_load_hectares %>%
   filter(Total > 0)%>%    #subbasins where all loads are zero
   select(c("Subbasin", "Cattle", "Goats_Sheep", "Equine", "Deer", "Hogs", "FailingOSSFs", "Pets", "WWTF")) %>%
@@ -191,7 +191,7 @@ plot_bottom <- ggplot()+
                   theme(strip.text = element_text(size = 10),text = element_text(family = "serif"))
 
 plot_bottom
-#Merge##########################################################################
+#Merged plot ###################################################################
 png(filename = "./Output/load_comp.png",height = 7, width = 6.5, res = 600, units = "in")
 ggarrange(plot_top,plot_bottom,ncol = 1)
 dev.off()

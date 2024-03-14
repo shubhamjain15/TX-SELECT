@@ -1,6 +1,3 @@
-loc_gis_data <- "./Input/GIS_TXSELECT_Feb2024/"
-loc_tbl_data <- "./Input/tables/"
-
 #Shapefiles
 gis_subbasins        <- read_sf(paste0(loc_gis_data,"HAWQS_TXSELECT_demwshed.shp"))
 gis_counties         <- read_sf(paste0(loc_gis_data,"Counties.shp"))
@@ -20,7 +17,7 @@ gis_pop20            <-  terra::rast(paste0(loc_gis_data,"pop20.tif"))          
 gis_hu20             <- terra::rast(paste0(loc_gis_data,"hu20.tif"))                      #10m HU density raster  per km2
 gis_ossf_1990        <- terra::rast(paste0(loc_gis_data,"OSSF_1990.tif"))           #10m OSSF raster per km2
 gis_nlcd             <- terra::rast(paste0(loc_gis_data,"nlcd2021.tif"))              #!Raster should only have value column. Delete all other columns
-gis_prism            <- terra::rast(paste0(loc_gis_data,"prism.tif")) 
+gis_prism            <- terra::rast(paste0(loc_gis_data,"PRISM.tif")) 
 
 #Tables
 tbl_deer_dens        <- read_csv(paste0(loc_tbl_data,"deer_densities.csv"))

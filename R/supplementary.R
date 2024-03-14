@@ -1,4 +1,4 @@
-#1. 911 addresses
+#1. 911 addresses###############################################################
 png(filename = "./Output/counties_911.png",height = 5.5, width = 6.5, res = 600, units = "in")
 ggplot() +
   geom_sf(data = gis_counties_with911, aes(fill = factor(ifelse(Join_Count > 0, "Data available", "Missing/No Data")))) +
@@ -19,7 +19,7 @@ ggplot() +
   theme(legend.title=element_blank())
 dev.off()
 
-#2. CCN+UA map
+#2. CCN+UA map##################################################################
 gis_CCN_UA_withinHUC <- st_intersection(gis_CCN_UA,gis_subbasins)
 
 png(filename = "./Output/UA_CCN.png",height = 5.5, width = 6.5, res = 600, units = "in")

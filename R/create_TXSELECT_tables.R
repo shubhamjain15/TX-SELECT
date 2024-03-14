@@ -95,10 +95,3 @@ TXSELECT_wwtf <- tbl_WWTF_facs%>%
                              EColiDailyAverage = "Ecoli_MPN",FlowLimit = "Flow_MGD" ))
 
 write_csv(TXSELECT_wwtf, paste0(loc_TXSELECT_files, "wwtf.csv"))
-
-#9. subbasins_from_to.csv
-
-
-#10. subbasins.geojson
-
-#11. subbasins_streams.geojson

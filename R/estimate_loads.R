@@ -2,7 +2,7 @@
 #Change livestock SR for specific counties and recalculate livestock numbers
 #Update counties cattle SR if >0.3333 animal per acre (3 acres per AU) to 0.3333
 tbl_livestock_SR_updated <- tbl_livestock_SR
-tbl_livestock_SR_updated$CATTLE_SR[tbl_livestock_SR_updated$CATTLE_SR > 0.3333] <- 0.3333
+tbl_livestock_SR_updated$CATTLE_SR[tbl_livestock_SR_updated$GEOID %in% cafo_counties_fips] <- 1/6 #AU Per acre
 counts_livestock <- tbl_lc_subbasins_counties%>%
                       rowwise()%>%
                       mutate(suitable_livestock_sub = (Shrub.Scrub+Herbaceous+Hay.Pasture)/4046.86)%>%   #per acre
@@ -36,7 +36,7 @@ counts_deer <- tbl_ecoregion%>%
 #Hogs
 counts_hogs <- tbl_lc_subbasins%>%
                       left_join(tbl_prism, by = "HUC12")%>%
-                      mutate(density = ifelse(PRCP >= 508, 33.3, 76))%>%       #33.3 acres per hog if prcp > 1000 mm otherwise 70
+                      mutate(density = ifelse(PRCP >= 508, 33.3, 72))%>%       #33.3 acres per hog if prcp > 1000 mm otherwise 72
                       rowwise()%>%
                       mutate(suitable_lc = (Deciduous.Forest+Evergreen.Forest+Mixed.Forest+Shrub.Scrub+Herbaceous+
                                               Hay.Pasture+Cultivated.Crops+Woody.Wetlands+Emergent.Herbaceous.Wetlands)/4046.86)%>%
