@@ -3,12 +3,12 @@ of Potential E. coli Loads Using a Spatially Explicit Modeling Approach
 ================
 Shubham Jain
 
-    ## [1] "Time of last build: 2024-03-14 15:08:30.767679"
+    ## [1] "Time of last build: 2024-03-14 15:09:19.726506"
 
-**This project contains the R code for:** Jain, S.,Srinivasan R., Helton
-T.J., and Karthikeyan R. (2024), TX-SELECT: A Web-Based Decision Support
-System for Regional Assessment of Potential E. coli Loads Using a
-Spatially Explicit Modeling Approach. ***Manuscript Under Review***.
+**This project contains the R code for:** Jain, S., Srinivasan R.,
+Helton T.J., and Karthikeyan R. (2024), TX-SELECT: A Web-Based Decision
+Support System for Regional Assessment of Potential E. coli Loads Using
+a Spatially Explicit Modeling Approach. ***Manuscript Under Review***.
 
 ## Summary
 
