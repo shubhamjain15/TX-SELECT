@@ -3,7 +3,7 @@ of Potential E. coli Loads Using a Spatially Explicit Modeling Approach
 ================
 Shubham Jain
 
-    ## [1] "Time of last build: 2024-03-14 15:00:16.484903"
+    ## [1] "Time of last build: 2024-03-14 15:05:46.826289"
 
 **This project contains the R code for:** Jain, S.,Srinivasan R., Helton
 T.J., and Karthikeyan R. (2024), TX-SELECT: A Web-Based Decision Support
@@ -50,12 +50,12 @@ To run the code, follow these steps:
     git clone https://github.com/shubhamjain15/TX-SELECT.git
     ```
 
-2.  **Download data**: Download required data
-    from:<https://doi.org/10.18738/T8/FWJVKW> and save it within the
-    current working directory in folder name “data”. All GIS data from
-    the Texas Data Repository can be saved in the sub-folder “GIS” and
-    all tables from GITHUB can be saved in the sub-folder “tables” to
-    run the code directly.
+2.  **Download data**: Download required data from:
+    <https://doi.org/10.18738/T8/FWJVKW> and save it within the current
+    working directory in folder name “data”. All GIS data from the Texas
+    Data Repository can be saved in the sub-folder “GIS” and all tables
+    from GITHUB can be saved in the sub-folder “tables” to run the code
+    directly.
 
-3.  **Run R code**: Run R scripts in the order as listed in ’file
-    descriptions `run_file.R`.
+3.  **Run R code**: Run R scripts in the order as listed in
+    `run_file.R`.
