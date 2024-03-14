@@ -23,5 +23,3 @@ gis_prism            <- terra::rast(paste0(loc_gis_data,"PRISM.tif"))
 tbl_deer_dens        <- read_csv(paste0(loc_tbl_data,"deer_densities.csv"))
 tbl_cafo_data        <- read_csv(paste0(loc_tbl_data,"cafo_data_final.csv"))
 
-
-load(file = "env_data.RData")
