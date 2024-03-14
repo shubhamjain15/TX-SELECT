@@ -19,15 +19,16 @@ Data required to reproduce the results is available at: https://doi.org/10.18738
 
 ## File Descriptions
 
-- `load_libraries.R`: Script to load all required packages to run other scripts.
-- `load_data.R`: Script to load all GIS and tabular data required for analysis.
-- `prep_data.R`: Script to prepare input data using GIS and other datasets.
-- `create_TXSELECT_tables.R`: Script to prepare input tables for SELECT web tools containing default numbers.
-- `estimate_loads.R`: scripts to estimate potential loads from all sources.
-- `analysis.R`: Analysis codes for the TX-SELECT paper.
+- `run_file.R`: Step-by-step code to reproduce TXSELECT files and analysis. 
+- `load_libraries.R`: Load all required packages.
+- `load_data.R`: Load all GIS and tabular data required for analysis.
+- `prep_data.R`: Process raw GIS data files and datasets for TXSELECT
+- `create_TXSELECT_tables.R`: Prepare TXSELECT predefined input tables in required format. 
+- `estimate_loads.R`: Estimate potential loads in all subwatersheds for manuscript analysis. 
+- `analysis.R`: Evaluating potential loads by subwatershed categories
 - `utils.R`: Required functions for plots.
-- `plots_tables.R`: Codes for reproducible plots and tables in the TX-SELECT paper.
-- `supplementary`: Codes for reproducible plots in the TX-SELECT supplementary materials.
+- `plots_tables.R`: Create plots and tables as shown in the manuscript.
+- `supplementary`: Create plots and tables as shown in manuscript supplementary materials.
 ## Instructions
 
 To run the code, follow these steps:
@@ -38,6 +39,6 @@ To run the code, follow these steps:
    git clone https://github.com/shubhamjain15/TX-SELECT.git
    ```
 
-2. **Download data**: Download required data from: and save it within the current working directory.   
+2. **Download data**: Download required data from:https://doi.org/10.18738/T8/FWJVKW and save it within the current working directory in folder name "data". All GIS data from the Texas Data Repository can be saved in the sub-folder "GIS" and all tables from GITHUB can be saved in the sub-folder "tables" to run the code directly.      
    
-3. **Run R code**: Run R scripts in the order as listed in file descriptions.
+3. **Run R code**: Run R scripts in the order as listed in 'file descriptions `run_file.R`.
