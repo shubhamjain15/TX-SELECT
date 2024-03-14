@@ -3,7 +3,7 @@ of Potential E. coli Loads Using a Spatially Explicit Modeling Approach
 ================
 Shubham Jain
 
-    ## [1] "Time of last build: 2024-03-14 15:05:46.826289"
+    ## [1] "Time of last build: 2024-03-14 15:08:30.767679"
 
 **This project contains the R code for:** Jain, S.,Srinivasan R., Helton
 T.J., and Karthikeyan R. (2024), TX-SELECT: A Web-Based Decision Support
@@ -39,7 +39,9 @@ Data required to reproduce the results is available at:
 - `utils.R`: Required functions for plots.
 - `plots_tables.R`: Create plots and tables as shown in the manuscript.
 - `supplementary`: Create plots and tables as shown in manuscript
-  supplementary materials. \## Instructions
+  supplementary materials.
+
+## Instructions
 
 To run the code, follow these steps:
 
