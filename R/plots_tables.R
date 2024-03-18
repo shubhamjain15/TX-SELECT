@@ -79,7 +79,7 @@ ggplot()+
   geom_sf(data = gis_subbasin_loads,aes(fill = Load), color = NA)+
   geom_sf(data = gis_texas_boundary, fill = "transparent", color = "black")+
   scale_fill_viridis_c(option = "H", direction = 1, begin = 0.2, end = 0.9, 
-                       breaks = c(1,25,50,75,90),
+                       breaks = c(5,25,50,75,95),
                        labels = c("Negligible", "Low", "Moderate", "High", "Very High"))+
   facet_wrap(~ Source, ncol = 3,labeller = custom_labeller)+
   theme_bw()+
